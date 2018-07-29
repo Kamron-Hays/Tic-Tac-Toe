@@ -1,0 +1,26 @@
+#input { display: none; }
+
+button {
+  height: 25px;
+  width: 50px;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+td {
+  border: 5px solid black;
+  height: 50px;
+  width: 50px;
+}
+
+td:hover {
+  background: #e4e4e4;
+}
+
+#td1, #td2, #td3 { border-top-style: none; }
+#td1, #td4, #td7 { border-left-style: none; }
+#td3, #td6, #td9 { border-right-style: none; }
+#td7, #td8, #td9 { border-bottom-style: none; }

@@ -1,0 +1,43 @@
+<html>
+  <head>
+    <title>Tic Tac Toe</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+  </head>
+  <body>
+    <h1>Tic Tac Toe</h1>
+    <p id="status">
+      <% if session[:player].nil? %>
+        Start game or select player
+        <button id="X" name="X">X</button>
+        <button id="O" name="O">O</button>
+      <% else %>
+        <%= session[:status] %>
+      <% end %>
+    </p>
+    <p>
+      <form action="/" id="board" name="board" method="post">
+        <input type="text" name="input" id="input"></p>
+      </form>
+      <table>
+        <tr>
+          <td id="td1" name="1"></td>
+          <td id="td2" name="2"></td>
+          <td id="td3" name="3"></td>
+        </tr>
+        <tr>
+          <td id="td4" name="4"></td>
+          <td id="td5" name="5"></td>
+          <td id="td6" name="6"></td>
+        </tr>
+        <tr>
+          <td id="td7" name="7"></td>
+          <td id="td8" name="8"></td>
+          <td id="td9" name="9"></td>
+        </tr>
+      </table>
+    </p>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="board.js"></script>
+  </body>
+</html>
