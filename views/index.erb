@@ -6,38 +6,43 @@
   <body>
     <h1>Tic Tac Toe</h1>
     <p id="status">
-      <% if session[:player].nil? %>
+      <%= session[:status] %>
+      <% if session[:game_over].nil? || session[:game_over] %>
         Start game or select player
         <button id="X" name="X">X</button>
         <button id="O" name="O">O</button>
       <% else %>
-        <%= session[:status] %>
+        <button id="restart" name="restart">Restart Game</button>
       <% end %>
     </p>
     <p>
       <form action="/" id="board" name="board" method="post">
-        <input type="text" name="input" id="input"></p>
+        <% if session[:turn] != session[:player] && !session[:game_over] %>
+          <input type="text" name="input" id="input" value="machine">
+        <% else %>
+          <input type="text" name="input" id="input">
+        <% end %>
       </form>
       <table>
         <tr>
-          <td id="td1" name="1"></td>
-          <td id="td2" name="2"></td>
-          <td id="td3" name="3"></td>
+          <td id="td1" name="1"><%= get(1) %></td>
+          <td id="td2" name="2"><%= get(2) %></td>
+          <td id="td3" name="3"><%= get(3) %></td>
         </tr>
         <tr>
-          <td id="td4" name="4"></td>
-          <td id="td5" name="5"></td>
-          <td id="td6" name="6"></td>
+          <td id="td4" name="4"><%= get(4) %></td>
+          <td id="td5" name="5"><%= get(5) %></td>
+          <td id="td6" name="6"><%= get(6) %></td>
         </tr>
         <tr>
-          <td id="td7" name="7"></td>
-          <td id="td8" name="8"></td>
-          <td id="td9" name="9"></td>
+          <td id="td7" name="7"><%= get(7) %></td>
+          <td id="td8" name="8"><%= get(8) %></td>
+          <td id="td9" name="9"><%= get(9) %></td>
         </tr>
       </table>
     </p>
 
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+    <script type="text/javascript" src="jquery-3.3.1.js"></script>
     <script type="text/javascript" src="board.js"></script>
   </body>
 </html>

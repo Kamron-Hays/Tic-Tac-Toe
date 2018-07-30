@@ -22,17 +22,14 @@ class AI_Player
   end
 
   def get_next_move(board)
-    square = calc_best_move(board.cells, @mark).index + 1
-    puts "Player #{@mark} chooses square " + square.to_s
-    sleep(0.5) # slow this down to human speed
-    square
+    calc_best_move(board.cells, @mark).index + 1
   end
   
   # Examines the specified board cells and returns a list of indexes
   # of those cells that are empty (unmarked).
   def get_empty_cells(cells)
     arr = []
-    cells.each_with_index { |cell, i| arr << i if cell != 'O' && cell != 'X' }
+    cells.each_with_index { |cell, i| arr << i if cell.nil? }
     arr
   end
 
@@ -125,7 +122,7 @@ class AI_Player
       move.score = result.score
 
       # return the cell back to empty (undo the move)
-      cells[i] = " "
+      cells[i] = nil
   
       # save the move (along with it's associated score)
       moves << move
