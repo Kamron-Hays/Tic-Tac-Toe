@@ -18,6 +18,7 @@ post '/' do
     session[:board] = Board.new
     session[:turn] = 'X'
     session[:game_over] = false
+    session[:first_turn] = true
 
     if params["input"] == 'X' || params["input"] == 'O'
       session[:player] = params["input"]
@@ -33,12 +34,28 @@ post '/' do
     session[:input] = params["input"].to_i
 
     if session[:turn] == session[:player]
+      # Player's turn
       if session[:board].mark(session[:input], session[:turn])
         session[:turn] = (session[:turn] == 'X') ? 'O' : 'X'
       end
     else
-      session[:board].mark(session[:machine].get_next_move(session[:board]), session[:turn])
+      # Machine's turn - make it possible to sometimes beat it.
+      if session[:first_turn] && [true, true, false].sample
+        # Make a "bad" first move.
+        positions = [2,4,6,8]
+        position = positions.sample
+        if !session[:board].get(position).nil?
+          # If that position is already taken, try again.
+          positions.delete(position)
+          position = positions.sample
+        end
+        session[:board].mark(position, session[:turn])
+      else
+        session[:board].mark(session[:machine].get_next_move(session[:board]), session[:turn])
+      end
+
       session[:turn] = (session[:turn] == 'X') ? 'O' : 'X'
+      session[:first_turn] = false
     end
   end
 

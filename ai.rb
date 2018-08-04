@@ -1,18 +1,5 @@
 #!/usr/bin/env ruby
 
-class Pair
-  attr_accessor :index, :score
-
-  def initialize(score = nil, index = nil)
-    @score = score
-    @index = index
-  end
-
-  def to_s
-    "[" + index.to_s + "," + score.to_s + "]"
-  end
-end
-
 class AI_Player
   attr_accessor :debug
 
@@ -22,7 +9,7 @@ class AI_Player
   end
 
   def get_next_move(board)
-    calc_best_move(board.cells, @mark).index + 1
+    calc_best_move(board.cells, @mark)[0] + 1
   end
   
   # Examines the specified board cells and returns a list of indexes
@@ -72,41 +59,38 @@ class AI_Player
     empty_cells = get_empty_cells(cells)
 
     # In the event all cells are empty, just pick a random cell.
-    return Pair.new(0, rand(9)) if empty_cells.length == 9
+    return [rand(0..8), 0] if empty_cells.length == 9
 
     # Checks for the terminal states win, lose, and tie and returns a score
     # accordingly. We don't have the associated index, but it is known at
     # the previous "level" - i.e. we will only get here from recursion.
     final_move = nil
     if winning?(cells, @mark == 'X' ? 'O' : 'X')
-      final_move = Pair.new(turns - 10)
+      final_move = [nil, turns - 10]
       print " " * (turns*4) + "Player #{@mark == 'X' ? 'O' : 'X'} wins." if @debug
     elsif winning?(cells, @mark)
-      final_move = Pair.new(10 - turns)
+      final_move = [nil, 10 - turns]
       print " " * (turns*4) + "Player #{@mark} wins." if @debug
     elsif empty_cells.length == 0
-      final_move = Pair.new(0)
+      final_move = [nil, 0]
       print " " * (turns*4) + "It's a tie." if @debug
     end
 
     if final_move
-      puts " Score #{final_move.score.to_s} for this series of moves" if @debug
+      puts " Score #{final_move[1]} for this series of moves" if @debug
       return final_move
     end
 
     if @debug
-      puts " " * (turns*4) + "Player #{player}'s turn"
-      puts " " * (turns*4) + "Current board state: " + cells.to_s
-      puts " " * (turns*4) + "Possible moves are: " + empty_cells.to_s
+      puts " " * (turns*4) + "Player #{player}'s turn (#{turns})"
+      puts " " * (turns*4) + "Current board state: #{cells}"
+      puts " " * (turns*4) + "Possible moves are: #{empty_cells}"
     end
 
     moves = []
     # loop through available cells
     empty_cells.each do |i|
-      puts " " * (turns*4) + "What if player #{player} chooses cell " + i.to_s if @debug
-      # create an object to store this move and its associated score
-      move = Pair.new
-      move.index = i
+      puts " " * (turns*4) + "What if player #{player} chooses cell #{i}" if @debug
 
       # mark the empty cell for the current player
       cells[i] = player
@@ -119,43 +103,53 @@ class AI_Player
       end
 
       # Save the score for this sequence.
-      move.score = result.score
+      score = result[1]
 
       # return the cell back to empty (undo the move)
       cells[i] = nil
   
       # save the move (along with it's associated score)
-      moves << move
+      moves << [i, score]
     end
+    puts " " * (turns*4) + "moves=#{moves}" if @debug
 
-    # Apply a Minimax algorithm to choose the "best" move for the
-    # associated player (depending on whose turn it is).
-    best_move = nil
-    if player == @mark # it's our turn
-      best_score = -10
-      puts " " * (turns*4) + "Player #{player} will choose the highest score between:" if @debug
-      moves.each_with_index do |move, i|
-        puts " " * (turns*4) + move.to_s if @debug
-        if move.score > best_score
-          best_score = move.score
-          best_move = i
-        end
+    if turns == 1
+      best_score = -100
+      score = 0
+      moves.each do |move|
+        score += move[1]
       end
-    else # it's the opponent's turn - assume they will make the best move to defeat us
-      best_score = 10
-      puts " " * (turns*4) + "Player #{player} will choose the lowest score between:" if @debug
-      moves.each_with_index do |move, i|
-        puts " " * (turns*4) + move.to_s if @debug
-        if move.score < best_score
-          best_score = move.score
-          best_move = i
+      best_move = [nil, score]
+    else
+      # Apply a Minimax algorithm to choose the "best" move for the
+      # associated player (depending on whose turn it is).
+      best_move = nil
+      if player == @mark # it's our turn
+        best_score = -100
+        puts " " * (turns*4) + "Player #{player} will choose the highest score between:" if @debug
+        moves.each do |move|
+          puts " " * (turns*4) + move.to_s if @debug
+          if move[1] > best_score
+            best_score = move[1]
+            best_move = move
+          end
+        end
+      else # it's the opponent's turn - assume they will make the best move to defeat us
+        best_score = 100
+        puts " " * (turns*4) + "Player #{player} will choose the lowest score between:" if @debug
+        moves.each do |move|
+          puts " " * (turns*4) + move.to_s if @debug
+          if move[1] < best_score
+            best_score = move[1]
+            best_move = move
+          end
         end
       end
     end
 
     # return the best move
-    puts " " * (turns*4) + "Choosing " + moves[best_move].to_s if @debug
-    moves[best_move]
+    puts " " * (turns*4) + "Choosing #{best_move}" if @debug
+    best_move
   end
 end
 
