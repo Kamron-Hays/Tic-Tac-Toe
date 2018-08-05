@@ -113,36 +113,28 @@ class AI_Player
     end
     puts " " * (turns*4) + "moves=#{moves}" if @debug
 
-    if turns == 1
+
+    # Apply a Minimax algorithm to choose the "best" move for the
+    # associated player (depending on whose turn it is).
+    best_move = nil
+    if player == @mark # it's our turn
       best_score = -100
-      score = 0
+      puts " " * (turns*4) + "Player #{player} will choose the highest score between:" if @debug
       moves.each do |move|
-        score += move[1]
-      end
-      best_move = [nil, score]
-    else
-      # Apply a Minimax algorithm to choose the "best" move for the
-      # associated player (depending on whose turn it is).
-      best_move = nil
-      if player == @mark # it's our turn
-        best_score = -100
-        puts " " * (turns*4) + "Player #{player} will choose the highest score between:" if @debug
-        moves.each do |move|
-          puts " " * (turns*4) + move.to_s if @debug
-          if move[1] > best_score
-            best_score = move[1]
-            best_move = move
-          end
+        puts " " * (turns*4) + move.to_s if @debug
+        if move[1] > best_score
+          best_score = move[1]
+          best_move = move
         end
-      else # it's the opponent's turn - assume they will make the best move to defeat us
-        best_score = 100
-        puts " " * (turns*4) + "Player #{player} will choose the lowest score between:" if @debug
-        moves.each do |move|
-          puts " " * (turns*4) + move.to_s if @debug
-          if move[1] < best_score
-            best_score = move[1]
-            best_move = move
-          end
+      end
+    else # it's the opponent's turn - assume they will make the best move to defeat us
+      best_score = 100
+      puts " " * (turns*4) + "Player #{player} will choose the lowest score between:" if @debug
+      moves.each do |move|
+        puts " " * (turns*4) + move.to_s if @debug
+        if move[1] < best_score
+          best_score = move[1]
+          best_move = move
         end
       end
     end
